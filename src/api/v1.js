@@ -17,8 +17,8 @@ const router = express.Router();
 // Evaluate the model, dynamically
 router.param('model', modelFinder);
 
-
 // API Routes
+
 router.get('/api/v1/:model', handleGetAll);
 router.post('/api/v1/:model', handlePost);
 
@@ -28,6 +28,13 @@ router.delete('/api/v1/:model/:id', handleDelete);
 
 // Route Handlers
 
+/**
+ * Get a list of records for model provided
+ * @router GET /api/v1/:model
+ * @returns {Object} 500 - Server Error
+ * @returns {Object} 200 - { count 2, results}
+ * 
+ */
 
 function handleGetAll(request,response,next) {
   request.model.get()
@@ -41,12 +48,19 @@ function handleGetAll(request,response,next) {
     .catch( next );
 }
 
+/**
+ * Get a list of records for model provided
+ * @router GET /api/v1/:model
+ * @returns {Object} 500 - Server Error
+ * @returns {Object} 200 - { count 2, results}
+ * 
+ */
+
 function handleGetOne(request,response,next) {
   request.model.get(request.params.id)
     .then( result => response.status(200).json(result[0]) )
     .catch( next );
 }
-
 
 function handlePost(request,response,next) {
   request.model.post(request.body)
