@@ -18,7 +18,7 @@ router.post('/api/v1/:model', auth('create'), handlePost);
 
 router.get('/api/v1/:model/:id', handleGetOne);
 
-router.put('/appi/v1/:model/:id', auth('update'), handlePutt);
+router.put('/appi/v1/:model/:id', auth('update'), handlePut);
 
 router.patch('/api/v1/:model/:id', auth('update'), handlePut);
 
