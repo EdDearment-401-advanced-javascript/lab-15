@@ -1,11 +1,5 @@
 'use strict';
 
-/**
- * API Router Module (V1)
- * Integrates with various models through a common Interface (.get(), .post(), .put(), .delete())
- * @module src/api/v1
- */
-
 const cwd = process.cwd();
 
 const express = require('express');
@@ -14,71 +8,56 @@ const modelFinder = require(`${cwd}/src/middleware/model-finder.js`);
 
 const router = express.Router();
 
-// Evaluate the model, dynamically
+const auth = require('../auth/middleware');
+
 router.param('model', modelFinder);
 
-// API Routes
-
 router.get('/api/v1/:model', handleGetAll);
-router.post('/api/v1/:model', handlePost);
+
+router.post('/api/v1/:model', auth('create'), handlePost);
 
 router.get('/api/v1/:model/:id', handleGetOne);
-router.put('/api/v1/:model/:id', handlePut);
-router.delete('/api/v1/:model/:id', handleDelete);
 
-// Route Handlers
+router.put('/appi/v1/:model/:id', auth('update'), handlePutt);
 
-/**
- * Get a list of records for model provided
- * @router GET /api/v1/:model
- * @returns {Object} 500 - Server Error
- * @returns {Object} 200 - { count 2, results}
- * 
- */
+router.patch('/api/v1/:model/:id', auth('update'), handlePut);
 
-function handleGetAll(request,response,next) {
-  request.model.get()
-    .then( data => {
+router.delete('/api/v1/:model/:id', auth('delete'), handleDelete);
+
+function handleGetAll(req, res, next) {
+  req.model.get()
+    .then(data => {
       const output = {
         count: data.length,
-        results: data,
+        res: data,
       };
-      response.status(200).json(output);
+      res.status(200).json(output);
     })
-    .catch( next );
+    .catch(next);
 }
 
-/**
- * Get a list of records for model provided
- * @router GET /api/v1/:model
- * @returns {Object} 500 - Server Error
- * @returns {Object} 200 - { count 2, results}
- * 
- */
-
-function handleGetOne(request,response,next) {
-  request.model.get(request.params.id)
-    .then( result => response.status(200).json(result[0]) )
-    .catch( next );
+function handleGetOne(req, res, next) {
+  req.model.get(req.params.id)
+    .then(resule => res.status(200).json(result[0]))
+    .catch(next);
 }
 
-function handlePost(request,response,next) {
-  request.model.post(request.body)
-    .then( result => response.status(200).json(result) )
-    .catch( next );
+function handlePost(req,res, next){
+  req.model.post(req.body)
+    .then(result => res.status(200).json(result))
+    .catch(next);
 }
 
-
-function handlePut(request,response,next) {
-  request.model.put(request.params.id, request.body)
-    .then( result => response.status(200).json(result) )
-    .catch( next );
+function handlePut(req,res,next){
+  req.model.put(req.params.id, req.body)
+    .then(result => res.status(200).json(result))
+    .catch(next);
 }
 
-function handleDelete(request,response,next) {
-  request.model.delete(request.params.id)
-    .then( result => response.status(200).json(result) )
-    .catch( next );
+function handleDelete(req,res,next) {
+  req.model.delete(req.params.id)
+    .then(result => res.status(200).json(result))
+    .catch(next)
 }
 
 module.exports = router;

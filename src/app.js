@@ -17,6 +17,8 @@ require('../docs/config/swagger');
 const errorHandler = require( `${cwd}/src/middleware/500.js`);
 const notFound = require( `${cwd}/src/middleware/404.js` );
 const v1Router = require( `${cwd}/src/api/v1.js` );
+const authRouter = require(`${cwd}/src/auth/router.js`);
+const aclRouter = require(`${cwd}/src/auth/aclRouter.js`);
 
 // Prepare the express app
 const app = express();
@@ -31,7 +33,10 @@ app.use(express.static('docs'));
 
 // Routes
 app.use(v1Router);
-//app.use(sadNess);
+
+app.use(authRouter);
+
+app.use(aclRouter);
 
 // Catchalls
 app.use(notFound);
